@@ -8,12 +8,15 @@ int main()
 {
 
     sf::RenderWindow window(sf::VideoMode(1000, 500), "SFML");
+    PerlinNoise p = PerlinNoise(rand());
+
+    
+
 
     auto s = window.getSize();
     width = s.x;
     height = s.y;
 
-    PerlinNoise p = PerlinNoise(rand());
     
     World w(rand());
 

@@ -1,7 +1,7 @@
 #include <SFML/Graphics.hpp>
 
 #define ZOOM_FACTOR -.05
-
+#define PERLIN_FACTOR 0.1
 
 
 # include <cassert>
@@ -23,5 +23,5 @@ float zoom = 1.f;
 
 
 
-
+#include "assets.hpp"
 #include "world.hpp"

@@ -12,12 +12,13 @@ struct Chunk{
     Tile contents[TILESPERCHUNK][TILESPERCHUNK];
     RenderTexture buffer;
 
+    
+
     void render(){
         for (int i = 0 ; i < TILESPERCHUNK; i ++){
 
             for(int j = 0; j < TILESPERCHUNK; j++){
 
-                
 
             }
 
@@ -35,7 +36,7 @@ struct Chunk{
 class World{
 
     private:
-        unordered_map<string, Chunk> chunks;
+        unordered_map<string, Chunk* > chunks;
         int seed;
         PerlinNoise noise;
         
@@ -55,7 +56,7 @@ class World{
 
         }
 
-        Chunk getChunk(int left, int top){
+        Chunk* getChunk(int left, int top){
 
             if(chunkExists(left,top)){
 
@@ -74,16 +75,18 @@ class World{
                 cout << "ERROR: regenerating existing chunk." << endl;
                 return;
             }
-            Chunk nc;
+            Chunk *nc;
             for(int i = 0 ; i < TILESPERCHUNK; i++){
 
                 for(int j = 0 ; j < TILESPERCHUNK; j++){
-
-                    nc.contents[i][j] = noise.noise(i+left,j+left,0);
-
+                    
+                    //nc->contents[i][j] = noise.noise((double)(1/(i+left+0.01)),(double)(1/(j+top+0.01)),(double)0.1);
+                    nc->contents[i][j] = noise.noise((double)(i+left), (double)(j+top), (double)0);
                 }
 
             }
+
+            chunks[to_string(left)+":"+to_string(top)] = nc;
             
 
 
@@ -99,7 +102,7 @@ class World{
     public:
         World(int seed){
 
-            noise = PerlinNoise(seed);
+            noise = PerlinNoise();
             this->seed=seed;
 
 
