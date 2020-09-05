@@ -6,6 +6,7 @@
 
 int main()
 {
+    srand(time(NULL));
 
     sf::RenderWindow window(sf::VideoMode(1000, 500), "SFML");
     PerlinNoise p = PerlinNoise(rand());
@@ -17,8 +18,16 @@ int main()
     width = s.x;
     height = s.y;
 
+
+
+
+    loadAllAssets();
+
     
     World w(rand());
+
+
+
 
     Perspective = View(FloatRect(0.f, 0.f, s.x, s.y));
     window.setView(Perspective);
@@ -52,7 +61,7 @@ int main()
         window.setView(Perspective);
         window.clear();
 
-        
+        w.draw(&window);
 
 
         window.display();

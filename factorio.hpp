@@ -1,7 +1,5 @@
 #include <SFML/Graphics.hpp>
 
-#define ZOOM_FACTOR -.05
-#define PERLIN_FACTOR 0.1
 
 
 # include <cassert>
@@ -12,7 +10,13 @@
 #include <vector>
 #include <list>
 #include <unordered_map>
+
+#include <glob.h>
+
 #include "PerlinNoise.hpp"
+
+
+#include "constants.hpp"
 
 using namespace sf;
 using namespace std;
