@@ -2,16 +2,22 @@
 
 
 
-
+void print_nonsense(UXElement* beans, void*n){
+    cout << "stuff"<<rand() << endl;
+}
 
 int main()
 {
     srand(time(NULL));
 
-    sf::RenderWindow window(sf::VideoMode(1000, 500), "SFML");
-    PerlinNoise p = PerlinNoise(rand());
+    sf::RenderWindow window(sf::VideoMode(1000,1000), "SFML");
 
-    
+    UXContext context;
+    Button b(&context,0,500,100,100);
+    b.setColor(CI_FILL, Color(255,0,255));
+    b.pre_render();
+    b.setEvent(print_nonsense);
+    context.activate();
 
 
     auto s = window.getSize();
@@ -23,8 +29,9 @@ int main()
 
     loadAllAssets();
 
+    Animation blank = Tiles::an_belt1;
     
-    World w(rand());
+    
 
 
 
@@ -36,6 +43,7 @@ int main()
         sf::Event event;
         while (window.pollEvent(event))
         {
+            context.feedEvent(event);
             if (event.type == sf::Event::Closed)
                 window.close();
 
@@ -61,8 +69,14 @@ int main()
         window.setView(Perspective);
         window.clear();
 
-        w.draw(&window);
 
+        CircleShape s(100);
+        s.setPosition(0,0);
+        blank.get()->setPosition(0,0);
+        blank.draw(&window);
+        Tiles::get(BLANK)->get()->setPosition(ASSET_DIM,0);
+        Tiles::get(BLANK)->draw(&window);
+        context.draw(&window);
 
         window.display();
     }

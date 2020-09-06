@@ -19,6 +19,15 @@
 #include "constants.hpp"
 
 using namespace sf;
+
+#include "GUI/gui.hpp"
+using namespace UX;
+
+
+
+
+
+
 using namespace std;
 View Perspective;
 int width;
@@ -27,5 +36,9 @@ float zoom = 1.f;
 
 
 
+#include "Animation.hpp"
 #include "assets.hpp"
+
+
+
 #include "world.hpp"

@@ -11,9 +11,8 @@
 ////////////////////////////////////////////
 //  Assets
 ////////////////////////////////////////////
-
-#define ASSET_DIM 500
-#define ANIMATIONFRAME 100
+#define ASSET_DIM 250
+#define ANIMDEL 15 //ms delay of animations
 
 
 
@@ -23,8 +22,12 @@
 //  Tiles
 ////////////////////////////////////////////
 typedef int Tile;
-#define TILESPERCHUNK 32
-#define GRASS 0
-#define SAND 1
-#define WATER 2
+#define BLANK 0
+#define BELT1 1
 
+
+
+////////////////////////////////////////////
+//  World
+////////////////////////////////////////////
+#define LEVELDIM 500
