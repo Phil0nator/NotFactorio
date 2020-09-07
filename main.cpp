@@ -8,7 +8,7 @@ Button b2(&context2, 500,500,200,200);
 void print_nonsense(UXElement* beans, void*n){
     //something
 
-    cout << "RESPONSE: Button" << endl;
+    //cout << "RESPONSE: Button" << endl;
 }
 
 
@@ -18,7 +18,8 @@ void switch_back(UXElement* a, void*n){
 }
 
 void dosomething(UXElement* a, void*n){
-    cout << "RESPONSE: [text]" << endl;
+    //cout << "RESPONSE: [text]" << endl;
+    a->hide();
 }
 
 int main()
@@ -28,9 +29,18 @@ int main()
 
     sf::RenderWindow window(sf::VideoMode(1000,1000), "SFML");
 
+    loadAllAssets();
+
+
     TextNode templte;
     templte.size = 15;
     templte.styles = Text::Underlined;
+
+    TextNode default_label;
+    default_label.styles = Text::Bold;
+    default_label.colors[CI_FILL] = Color(255,255,255);
+    default_label.colors[CI_BORDER] = Color(0,0,0);
+    default_label.outlineThickness = 2;
 
 
 
@@ -43,14 +53,21 @@ int main()
 
 
     Button second(&context, 500,500,100,100);
+    second.setImage(Tiles::s_blank);
+    second.setColor(CI_FILL, _UX_NOMASK);
     second.pre_render();
     second.setEvent(dosomething);
+
+
+
+    Label l(&context,TextNode(default_label, "This is a label. "),100,700);
+    l.pre_render();
 
     context.activate();
 
     b2.pre_render();
     b2.setEvent(switch_back);
-    
+
 
 
 
@@ -61,7 +78,6 @@ int main()
 
 
 
-    loadAllAssets();
 
     Animation blank = Tiles::an_belt1;
     

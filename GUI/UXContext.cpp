@@ -80,6 +80,7 @@ void UXContext::draw(RenderTarget* dest){
     fillInfo();
 
     for(int i = 0 ; i < elems.size();i++){
+        if(!elems.at(i)->visible)continue;
         elems.at(i)->logic();
         elems.at(i)->redraw(dest);
     }
@@ -130,7 +131,12 @@ void UXContext::fillInfo(){
 
 void requestUXFrame(RenderTarget *target){
     if(activeContext == nullptr)return;
+
+    View v = target->getView();
+    target->setView(target->getDefaultView());
     activeContext->draw(target);
+    target->setView(v);
+
 }
 
 void feedUXEvent(Event e){

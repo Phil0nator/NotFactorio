@@ -58,14 +58,16 @@ namespace UX{
 
     #define _UX_TRANSPARENT Color(255,255,255,0)
 
-
+    #define _UX_WHITE Color(255,255,255)
+    #define _UX_BLACK Color(0,0,0)
+    #define _UX_NOMASK Color(255,255,255)
     ////////////////////////////////////
     ///
     /// Types of elements
     ///
     ////////////////////////////////////
     enum UXType{
-        UX_BUTTON, UX_ENTRY, UX_CHECK, UX_SLIDER, UX_DRAGDROP, UX_PAGE
+        UX_BUTTON, UX_ENTRY, UX_CHECK, UX_SLIDER, UX_DRAGDROP, UX_PAGE, UX_LABEL, UX_PANEL
     };
 
     ////////////////////////////////////////
@@ -359,6 +361,21 @@ namespace UX{
     /////////////////////////////////////////////
     void feedUXEvent(Event e);
 
+
+
+
+
+
+    ///////////////////////////////////////////////////
+    ///
+    /// Abstract class UXElement is extended by
+    ///     each type of element
+    ///
+    /// For a class to correctly extend UXElement it must have:
+    ///     void redraw(RenderTarget* dest);
+    ///     void pre_render();
+    ///     void logic();
+    ///////////////////////////////////////////////////
     class UXElement{
         protected:
             UXElement *parent;
@@ -384,8 +401,8 @@ namespace UX{
 
 
 
-
         public:
+            bool visible = true;
             UXState state =             UX_NORMAL;
             bool border   =             false;
             bool image    =             false;
@@ -402,6 +419,9 @@ namespace UX{
 
             void setColor(ColorIdentifier n, Color c);
             void setBorderWidth(int bw);
+            void show();
+            void hide();
+            void toggle();
         
             void setEvent(UXEventCallback cb, void* extra = nullptr);
             virtual void redraw(RenderTarget* dest) = 0;
@@ -421,6 +441,19 @@ namespace UX{
 
         public:
             RenderTexture rt; //drawing buffer
+
+            ///////////////////////////////////////////////////////////////////////////
+            ///
+            /// Button()
+            /// 
+            /// \param _context the parent context for the element
+            /// \param _x coord
+            /// \param _y coord
+            /// \param _w width
+            /// \param _h height
+            /// \see UXElement
+            ///
+            ////////////////////////////////////////////////////////////////////////////
             Button(UXContext *_context, int _x, int _y, int _w, int _h) : UXElement(_context, UX_BUTTON){
                 x=_x;
                 y=_y;
@@ -429,16 +462,73 @@ namespace UX{
                 image=false;
             }
             
+            ///////////////////////////////////////////////
+            ///
+            /// setImage
+            /// apply an image to a button, replacing its shape
+            /// (colors will still apply)
+            /// \param tx an image to apply to the button (must have the same dimentions as the button)
+            ///
+            /// (must be called before pre rendering)
+            ////////////////////////////////////////////////
             void setImage(Sprite tx);
+
+            ///Used internally
             void redraw(RenderTarget* dest);
+            
+            ////////////////////////////////////////////////
+            ///
+            /// pre_render() must be called on every UXElement
+            ///     before it is drawn, and after all of its properties
+            ///     have been set.
+            /// pre_render() will fill the element's graphics buffer with
+            ///     the correct information based on its properties, so any
+            ///     updates made to the button without a corresponding 
+            ///     pre_render() call will not be graphically displayed
+            ///
+            ////////////////////////////////////////////////
             void pre_render();
+
+            ///used internally
             void logic();
+
+            //////////////////////////////////////////////
+            ///
+            /// setTextNode()
+            ///
+            /// Give a button some text. \see TextNode
+            /// (must be called before pre rendering)
+            /// \param t TextNode object
+            ///
+            ////////////////////////////////////////////////
             void setTextNode(TextNode t);
 
 
     };
 
+
+    class Label : public UXElement{
+        TextNode contents;
+        public:
+        Label(UXContext *context,TextNode text, int _x, int _y) : UXElement(context,UX_LABEL){
+
+            x = _x;
+            y = _y;
+            contents = text;
+
+        }
+
+
+        void pre_render();
+        void redraw(RenderTarget* dest);
+        void logic();
+
+
+    };
+
+
     #include "Button.cpp"
+    #include "Label.cpp"
     #include "TextNode.cpp"
     #include "UXContext.cpp"
 

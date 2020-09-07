@@ -5,12 +5,13 @@ void Button::redraw(RenderTarget* dest){
     Sprite sp = sprtbuff[state];
     sp.setPosition(x,y);
     dest->draw(sp);
+
 }
 
 
 
 void Button::setImage(Sprite tx){
-    imbf = tx;
+    imbf = Sprite(tx);
     image=true;
 }
 
@@ -19,7 +20,10 @@ void Button::pre_render(){
     rt.create(w*3, h);
     text.render();
     if(image){
-                
+        auto bounds = imbf.getTextureRect();
+        imbf.scale((double)w/bounds.width, (double)h/bounds.height);
+        imbf.setPosition(0,0);
+        imbf.setColor(colors[UX::CI_FILL]);
         rt.draw(imbf);
         text.draw_to(&rt,this, Vector2i(0,0));
 

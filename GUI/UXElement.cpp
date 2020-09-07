@@ -17,3 +17,13 @@ bool UXElement::contains(int ix, int iy){
 void UXElement::setBorderWidth(int bw){
     borderWidth=bw;
 }
+
+void UXElement::toggle(){
+    visible=!visible;
+}
+void UXElement::hide(){
+    visible=false;
+}
+void UXElement::show(){
+    visible=true;
+}

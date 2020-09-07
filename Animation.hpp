@@ -33,6 +33,9 @@ class Single : public Asset{
             return &drawer;
         }
 
+
+        operator Sprite() const {return Sprite(drawer);}
+
         void draw(RenderTarget *dest){
 
             dest->draw(drawer);
