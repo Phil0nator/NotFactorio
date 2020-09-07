@@ -84,7 +84,7 @@ void Button::pre_render(){
 
 
 void Button::logic(){
-
+    
     int mx, my;
     context->accessMouseCoords(&mx,&my);
     bool md = false;

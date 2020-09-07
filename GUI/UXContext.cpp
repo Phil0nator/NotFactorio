@@ -81,6 +81,7 @@ void UXContext::draw(RenderTarget* dest){
 
     for(int i = 0 ; i < elems.size();i++){
         if(!elems.at(i)->visible)continue;
+        elems.at(i)->handleOwnAnimation();
         elems.at(i)->logic();
         elems.at(i)->redraw(dest);
     }

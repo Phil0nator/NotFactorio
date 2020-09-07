@@ -26,4 +26,33 @@ void UXElement::hide(){
 }
 void UXElement::show(){
     visible=true;
+    animating=true;
+    for(int i = 0 ; i < 5;i++){
+        if(anims[i] != nullptr){
+            anims[i]->progress=-1;
+            anims[i]->feedInitial(this);
+        }
+    }
+}
+
+Color UXElement::getColor(ColorIdentifier n){
+    return colors[n];
+}
+void UXElement::setAnimation(AnimationIdentifier id, UXAnimations::Animation* anim){
+
+    anims[id]=anim;
+    anim->feedInitial(this);
+
+}
+
+void UXElement::handleOwnAnimation(){
+
+    if(!animating)return;
+    if(anims[state] == nullptr){
+        animating=false;    
+        return;
+    };
+    anims[state]->apply(this,state);
+    if(!animating)context->events.enqueue(anims[state]->onfinish);
+
 }

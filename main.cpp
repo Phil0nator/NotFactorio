@@ -3,12 +3,13 @@
 UXContext context2;
 UXContext context;
 Button b2(&context2, 500,500,200,200);
-
+Button b;
 
 void print_nonsense(UXElement* beans, void*n){
     //something
 
     //cout << "RESPONSE: Button" << endl;
+    beans->show();
 }
 
 
@@ -16,10 +17,15 @@ void switch_back(UXElement* a, void*n){
 
 
 }
+void animationFinished(UXElement* a, void*n){
+    cout << a << endl;
+}
+
+
 
 void dosomething(UXElement* a, void*n){
     //cout << "RESPONSE: [text]" << endl;
-    a->hide();
+    b.show();
 }
 
 int main()
@@ -44,11 +50,13 @@ int main()
 
 
 
-    Button b(&context,0,500,100,100);
+    b.create(&context,0,500,100,100);
     b.setColor(CI_FILL, Color(255,0,255));
     b.setTextNode(TextNode(templte, "Button"));
     b.pre_render();
     b.setEvent(print_nonsense);
+    b.setAnimation(A_SHOW, new UXAnimations::Fade(1000,animationFinished));
+    b.hide();
     b.ID = 0;
 
 

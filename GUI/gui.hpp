@@ -94,6 +94,12 @@ namespace UX{
 
     };
 
+    enum AnimationIdentifier{
+
+        A_SHOW, A_HOVER, A_ACTIVE
+
+    };
+
     
     namespace Align{
         
@@ -117,14 +123,12 @@ namespace UX{
     /// integer representation of combined Align::TextAlign enums
     typedef int Alignment;
     
-    ///Forward Declaration
+    
     class UXElement;
-
-
-
-    ///Forward Declaration
     class UXContext;
 
+
+    
 
 
 
@@ -167,7 +171,70 @@ namespace UX{
     };
     
     
-    
+
+
+    #include <chrono>
+    using namespace std::chrono;
+
+    long millis(){
+        return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+    }
+
+    typedef long Milliseconds;
+
+
+
+    namespace UXAnimations{
+
+        enum Direction{
+
+            UP = 1 << 1, 
+            DOWN = 1 << 2, 
+            LEFT = 1 << 3, 
+            RIGHT = 1 <<4
+
+        };
+
+        class Animation{
+
+            public:
+                float d_alpha;
+                Vector2i d_coords;
+                Vector2i velocity;
+                float rotation;
+                int duration = 0;
+                UXEvent onfinish;
+                int progress = -1;
+                Milliseconds last;
+                Milliseconds timepertick;
+
+                Animation(){
+                    d_alpha=0;
+                    d_coords = {0,0};
+                    velocity={0,0};
+                    rotation = 0.0;
+                }
+
+
+
+            virtual void apply(UXElement* dest, int sprite) = 0;
+            virtual void feedInitial(UXElement* og) = 0;
+
+            };
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
     ///Forward Declaration
     void UXContext_tickthreadmainlp(UXContext *context);
     
@@ -392,16 +459,17 @@ namespace UX{
             Color colors[6] = {_UX_DEFAULT_NORMALBORDER, _UX_DEFAULT_NORMALFILL, _UX_DEFAULT_MOVERBORDER, _UX_DEFAULT_MOVERFILL, _UX_DEFAULT_MDOWNBORDER,_UX_DEFAULT_MDOWNFILL};
             UXEvent event;
             Texture buffer;
-            Sprite sprtbuff[3]; //normal, mouse over, mouse down buffers for elements using images
 
 
             bool contains(int ix, int iy);
             int borderWidth = 1;
-
+            UXAnimations::Animation* anims[5] = {nullptr,nullptr,nullptr,nullptr,nullptr};
 
 
 
         public:
+            Sprite sprtbuff[3]; //normal, mouse over, mouse down buffers for elements using images
+            bool animating = true;
             bool visible = true;
             UXState state =             UX_NORMAL;
             bool border   =             false;
@@ -414,14 +482,19 @@ namespace UX{
                 type=_type;
                 
                 context=_context;
+                if(context==nullptr)return;
                 context->pushnextelement(this);
             }
+            void handleOwnAnimation();
 
             void setColor(ColorIdentifier n, Color c);
             void setBorderWidth(int bw);
             void show();
             void hide();
             void toggle();
+            Color getColor(ColorIdentifier n);
+
+            void setAnimation(AnimationIdentifier id, UXAnimations::Animation* anim);
         
             void setEvent(UXEventCallback cb, void* extra = nullptr);
             virtual void redraw(RenderTarget* dest) = 0;
@@ -430,6 +503,7 @@ namespace UX{
 
 
     };
+    #include "animations.hpp"
 
     #include "UXElement.cpp"
 
@@ -459,6 +533,19 @@ namespace UX{
                 y=_y;
                 w=_w;
                 h=_h;
+                image=false;
+            }
+
+            Button() : UXElement(nullptr, UX_BUTTON){}
+
+
+            void create(UXContext *_context, int _x, int _y, int _w, int _h){
+                x=_x;
+                y=_y;
+                w=_w;
+                h=_h;
+                context=_context;
+                context->pushnextelement(this);
                 image=false;
             }
             
@@ -525,6 +612,11 @@ namespace UX{
 
 
     };
+
+
+
+
+
 
 
     #include "Button.cpp"
