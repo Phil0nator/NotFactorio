@@ -5,11 +5,15 @@ void UXContext::pushnextelement(UXElement* n){
 }
 
 void UXContext::texec(){
+
+
     while (events.empty()){} // wait for new stuff
     UXEvent e;
     if(events.dequeue(&e)){
         e.go();
     }
+    
+
     
 }
 
@@ -44,6 +48,8 @@ void UXContext::cleanup(){
     t->terminate();
     active=false;
     events.reset();
+    sfeventstack.clear();
+    fillInfo();
 
 }
 
@@ -57,6 +63,7 @@ void UXContext::activate(){
 
     UXContext *old = activeContext;
     activeContext = this;
+    sfeventstack = old->sfeventstack;
     active = true;
     t->launch();
     old->cleanup();
@@ -105,10 +112,12 @@ void UXContext::fillInfo(){
             my = e.mouseMove.y;
             sfeventstack.erase(sfeventstack.begin()+i);
         }else if (e.type == Event::MouseButtonPressed){
+            
             mouseDowns[e.mouseButton.button] = true;
             sfeventstack.erase(sfeventstack.begin()+i);
 
         }else if (e.type == Event::MouseButtonReleased){
+
             mouseDowns[e.mouseButton.button]=false;
             mouseUps[e.mouseButton.button]=true;
             sfeventstack.erase(sfeventstack.begin()+i);

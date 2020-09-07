@@ -36,19 +36,33 @@ void Button::pre_render(){
 
     }else{
         RectangleShape sh(Vector2f(w,h));
+        RectangleShape brdr(Vector2f(w-borderWidth*2,h-borderWidth*2));
+        brdr.setFillColor(_UX_TRANSPARENT);
+        brdr.setOutlineThickness(borderWidth);
+        brdr.setPosition(borderWidth,borderWidth);
+
         sh.setFillColor(colors[CI_FILL]);
-        sh.setOutlineColor(colors[CI_BORDER]);
+        brdr.setOutlineColor(colors[CI_BORDER]);
         rt.draw(sh);
+        rt.draw(brdr);
         text.draw_to(&rt,this, Vector2i(0,0));
+        brdr.move(w,0);
+
         sh.setPosition(w,0);
         sh.setFillColor(colors[CI_MOVERFILL]);
-        sh.setOutlineColor(colors[CI_MOVERBORDER]);
+        brdr.setOutlineColor(colors[CI_MOVERBORDER]);
         rt.draw(sh);
+        rt.draw(brdr);
+
         text.draw_to(&rt,this, Vector2i(w,0));
+        brdr.move(w,0);
+
+
         sh.setPosition(w+w,0);
         sh.setFillColor(colors[CI_MDOWN_FILL]);
-        sh.setOutlineColor(colors[CI_MDOWN_BORDER]);
+        brdr.setOutlineColor(colors[CI_MDOWN_BORDER]);
         rt.draw(sh);
+        rt.draw(brdr);
         text.draw_to(&rt,this, Vector2i(w+w,0));
 
     }
@@ -79,13 +93,16 @@ void Button::logic(){
         mu = context->mouseUps[Mouse::Left];
         if(md){
             state = UX_ACTIVE;
-        }else if (mu){
+        }
+        if (mu){
             state = UX_ACTIVE;
             context->events.enqueue(event);
+
         }
     }else{
         state=UX_NORMAL;
     }
+    
 
 }
 

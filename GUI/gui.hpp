@@ -1,3 +1,7 @@
+
+
+
+
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 #include <iostream>
@@ -50,6 +54,9 @@ namespace UX{
     #define _UX_DEFAULTTEXTNODE "[Text]"
     #define _UX_DEFAULTOUTLINETEXTSIZE 0
     #define _UX_DEFAULTFONT sf::Font::GetDefaultFont()
+
+
+    #define _UX_TRANSPARENT Color(255,255,255,0)
 
 
     ////////////////////////////////////
@@ -372,7 +379,7 @@ namespace UX{
 
 
             bool contains(int ix, int iy);
-
+            int borderWidth = 1;
 
 
 
@@ -384,6 +391,7 @@ namespace UX{
             bool image    =             false;
             UXType type;
             int x, y, w, h;
+            int ID;
             UXElement() = default;
             UXElement(UXContext *_context, UXType _type){
                 type=_type;
@@ -393,6 +401,7 @@ namespace UX{
             }
 
             void setColor(ColorIdentifier n, Color c);
+            void setBorderWidth(int bw);
         
             void setEvent(UXEventCallback cb, void* extra = nullptr);
             virtual void redraw(RenderTarget* dest) = 0;

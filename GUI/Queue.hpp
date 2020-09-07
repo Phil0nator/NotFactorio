@@ -38,7 +38,7 @@ template <class T> class Queue{
     }
     bool empty(){
 
-        return (front == -1 || front == rear);
+        return (front == -1);
 
     }
 

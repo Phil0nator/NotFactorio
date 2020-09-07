@@ -7,19 +7,23 @@ Button b2(&context2, 500,500,200,200);
 
 void print_nonsense(UXElement* beans, void*n){
     //something
-    context2.activate();
 
+    cout << "RESPONSE: Button" << endl;
 }
 
 
 void switch_back(UXElement* a, void*n){
 
-    context.activate();
 
+}
+
+void dosomething(UXElement* a, void*n){
+    cout << "RESPONSE: [text]" << endl;
 }
 
 int main()
 {
+
     srand(time(NULL));
 
     sf::RenderWindow window(sf::VideoMode(1000,1000), "SFML");
@@ -27,25 +31,26 @@ int main()
     TextNode templte;
     templte.size = 15;
     templte.styles = Text::Underlined;
-    templte.ta = (Align::BOTTOM|Align::RIGHT);
 
 
 
     Button b(&context,0,500,100,100);
     b.setColor(CI_FILL, Color(255,0,255));
-    b.setTextNode(TextNode(templte, "Button, \nmore things"));
+    b.setTextNode(TextNode(templte, "Button"));
     b.pre_render();
     b.setEvent(print_nonsense);
+    b.ID = 0;
 
 
     Button second(&context, 500,500,100,100);
     second.pre_render();
-
+    second.setEvent(dosomething);
 
     context.activate();
 
     b2.pre_render();
     b2.setEvent(switch_back);
+    
 
 
 
