@@ -24,8 +24,16 @@ int main()
 
     sf::RenderWindow window(sf::VideoMode(1000,1000), "SFML");
 
+    TextNode templte;
+    templte.size = 15;
+    templte.styles = Text::Underlined;
+    templte.ta = (Align::BOTTOM|Align::RIGHT);
+
+
+
     Button b(&context,0,500,100,100);
     b.setColor(CI_FILL, Color(255,0,255));
+    b.setTextNode(TextNode(templte, "Button, \nmore things"));
     b.pre_render();
     b.setEvent(print_nonsense);
 

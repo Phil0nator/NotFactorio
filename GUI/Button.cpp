@@ -17,29 +17,40 @@ void Button::setImage(Sprite tx){
 void Button::pre_render(){
 
     rt.create(w*3, h);
+    text.render();
     if(image){
                 
         rt.draw(imbf);
+        text.draw_to(&rt,this, Vector2i(0,0));
+
         imbf.setPosition(w,0);
         imbf.setColor(colors[UX::CI_MOVERFILL]);
         rt.draw(imbf);
+        text.draw_to(&rt,this, Vector2i(w,0));
+
         imbf.setPosition(w+w,0);
         imbf.setColor(colors[UX::CI_MDOWN_FILL]);
         rt.draw(imbf);
+        text.draw_to(&rt,this, Vector2i(w+w,0));
+
 
     }else{
         RectangleShape sh(Vector2f(w,h));
         sh.setFillColor(colors[CI_FILL]);
         sh.setOutlineColor(colors[CI_BORDER]);
         rt.draw(sh);
+        text.draw_to(&rt,this, Vector2i(0,0));
         sh.setPosition(w,0);
         sh.setFillColor(colors[CI_MOVERFILL]);
         sh.setOutlineColor(colors[CI_MOVERBORDER]);
         rt.draw(sh);
+        text.draw_to(&rt,this, Vector2i(w,0));
         sh.setPosition(w+w,0);
         sh.setFillColor(colors[CI_MDOWN_FILL]);
         sh.setOutlineColor(colors[CI_MDOWN_BORDER]);
         rt.draw(sh);
+        text.draw_to(&rt,this, Vector2i(w+w,0));
+
     }
     rt.display();
     //buffer.swap((Texture&)rt.getTexture());
@@ -75,5 +86,11 @@ void Button::logic(){
     }else{
         state=UX_NORMAL;
     }
+
+}
+
+void Button::setTextNode(TextNode t){
+
+    text=t;
 
 }

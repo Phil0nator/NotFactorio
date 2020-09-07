@@ -40,10 +40,16 @@ namespace UX{
     #define _UX_DEFAULT_MOVERBORDER         Color(100,100,255)
     #define _UX_DEFAULT_MDOWNFILL           Color(200,200,255)
     #define _UX_DEFAULT_MDOWNBORDER         Color(255,255,255)
+    #define _UX_DEFAULT_TEXTCOLOR           Color(200,200,200)
 
     ///Size of event queue
     #define __UX_EVENTQUEUESIZE 4096
 
+    ///Default text size (px)
+    #define _UX_DEFAULTTEXTSIZE 20
+    #define _UX_DEFAULTTEXTNODE "[Text]"
+    #define _UX_DEFAULTOUTLINETEXTSIZE 0
+    #define _UX_DEFAULTFONT sf::Font::GetDefaultFont()
 
 
     ////////////////////////////////////
@@ -74,10 +80,34 @@ namespace UX{
     /////////////////////////////////////////
     enum ColorIdentifier{
 
-        CI_BORDER = 0, CI_FILL = 1,CI_MOVERBORDER = 2, CI_MOVERFILL = 3, CI_MDOWN_BORDER = 4, CI_MDOWN_FILL = 5
+        CI_BORDER = 0, CI_FILL = 1,CI_MOVERBORDER = 2, CI_MOVERFILL = 3, CI_MDOWN_BORDER = 4, CI_MDOWN_FILL = 5,
+        
 
     };
 
+    
+    namespace Align{
+        
+        ////////////////////////////////////
+        ///
+        /// TextAlign is an enumeration of different
+        ///     ways to align text based on a container.
+        ///
+        /// (CENTER can not be combined with any other enum)
+        ///////////////////////////////////
+        enum TextAlign{
+
+            CENTER = 1 << 31, //Non-Combinable
+            LEFT   = 1 << 1,
+            RIGHT  = 1 << 2,
+            BOTTOM = 1 << 3,
+            TOP    = 1 << 4,
+
+        };
+    }
+    /// integer representation of combined Align::TextAlign enums
+    typedef int Alignment;
+    
     ///Forward Declaration
     class UXElement;
 
@@ -133,7 +163,68 @@ namespace UX{
     void UXContext_tickthreadmainlp(UXContext *context);
     
     
-    
+    ///////////////////////////////////////////////////
+    ///
+    /// TextNodes are used to represent portions of text
+    ///     to be displayed by UXElements.
+    ///
+    /// TextNodes contain the actual string content, and all
+    ///     of its formatting.
+    ///
+    ///////////////////////////////////////////////////
+    struct TextNode{
+
+        ///Actual string content
+        string content = _UX_DEFAULTTEXTNODE;
+        
+        ///\see sf::Font
+        /// defaults to arial.ttf
+        sf::Font font;
+
+        ///Text size (px)
+        int size = _UX_DEFAULTTEXTSIZE;
+
+        ///BorderWidth (px)
+        int outlineThickness =_UX_DEFAULTOUTLINETEXTSIZE;
+        
+        ///Color id's
+        /// \see ColorIdentifier
+        Color colors[2] = {_UX_DEFAULT_TEXTCOLOR, Color(0,0,0)};
+        
+        ///Styling
+        /// \see sf::Text::Style
+        sf::Text::Style styles = sf::Text::Regular;
+        
+        ///Text buffer object
+        ///\see sf::Text
+        sf::Text buffer;
+
+        ///Alignment info
+        /// \see UX::TextAlign
+        Alignment ta = Align::CENTER;
+
+        TextNode(){
+            font.loadFromFile("GUI/arial.ttf");
+        }
+
+        TextNode(Font f, string t);
+
+        TextNode(TextNode other, string newtext);
+
+
+        void render();
+
+        void draw_to(RenderTarget* target, UXElement* source, Vector2i translation);
+
+
+
+    };
+
+
+
+
+
+
     
     
     ////////////////////////////////////////////////
@@ -276,7 +367,6 @@ namespace UX{
 
             Color colors[6] = {_UX_DEFAULT_NORMALBORDER, _UX_DEFAULT_NORMALFILL, _UX_DEFAULT_MOVERBORDER, _UX_DEFAULT_MOVERFILL, _UX_DEFAULT_MDOWNBORDER,_UX_DEFAULT_MDOWNFILL};
             UXEvent event;
-            string text = "UXElement";
             Texture buffer;
             Sprite sprtbuff[3]; //normal, mouse over, mouse down buffers for elements using images
 
@@ -317,6 +407,7 @@ namespace UX{
 
     class Button : public UXElement{
         Sprite      imbf;
+        TextNode    text;
         friend      UXContext;
 
         public:
@@ -333,15 +424,13 @@ namespace UX{
             void redraw(RenderTarget* dest);
             void pre_render();
             void logic();
+            void setTextNode(TextNode t);
 
 
     };
 
     #include "Button.cpp"
-
-
-
-
+    #include "TextNode.cpp"
     #include "UXContext.cpp"
 
     
