@@ -56,20 +56,24 @@ void Button::pre_render(){
 
 void Button::logic(){
 
-    int mx=context->mouseMove.x;
-    int my=context->mouseMove.y;
-    if(!contains(mx,my)){
-        state = UX_NORMAL;
-        return;
-    }
-    bool mdown = context->mouseDown[Mouse::Left] && context->mouseStateChange;
-    if(context->mouseStateChange && context->mouseRel[Mouse::Left]){
-        context->events.enqueue(this->event);
-    }
-    if(mdown){
-        state = UX_ACTIVE;
-        
+    int mx, my;
+    context->accessMouseCoords(&mx,&my);
+    bool md = false;
+    bool mu = false;
+
+
+    if(contains(mx,my)){
+        state=UX_HOVER;
+        md = context->mouseDowns[Mouse::Left];
+        mu = context->mouseUps[Mouse::Left];
+        if(md){
+            state = UX_ACTIVE;
+        }else if (mu){
+            state = UX_ACTIVE;
+            context->events.enqueue(event);
+        }
     }else{
-        state = UX_HOVER;
+        state=UX_NORMAL;
     }
+
 }

@@ -2,25 +2,23 @@
 #include <stdio.h>
 #include <iostream>
 #include <mutex>
-#include <condition_variable>
+
+
 
 template <class T> class Queue{
     private:
         T* data = nullptr;
         int front = -1;
         int rear = -1;
-        mutex mut;
-        condition_variable cond;
+        std::mutex mut;
     public:
-    int count = 0;
-    int size;
 
-    Queue(){}
+    int size;
+    int count;
 
     Queue(size_t max_elems){
-        mutex(mut);
-        condition_variable(cond);
-        data = (T*)malloc(max_elems*sizeof(T));
+        std::mutex(mut);
+        data = new T[max_elems];
         size = max_elems;
 
     }
@@ -29,94 +27,95 @@ template <class T> class Queue{
         free(data);
     }
 
-    Queue(const Queue<T>& other){
-        free(data);
-        data = other.data;
-        front = other.front;
-        rear = other.rear;
-    }
-
-    void ld(const Queue<T>&other){
-        free(data);
-        data = other.data;
-        front = other.front;
-        rear = other.rear;
+    Queue(const Queue& other) : Queue(other.size){
+        free(other.data);
     }
 
     bool isfull(){
-        bool out;
-        lock_guard<mutex> lock(mut);
-        out = (front==0&&rear==size-1) || (front==rear+1);
-        cond.notify_one();
-        return out;
 
-    }        
+        return (front==0&&rear==size-1) || (front==rear+1);
+
+    }
     bool empty(){
-        bool out;
-        lock_guard<mutex> lock(mut);
-        out = (front==-1 || front==rear );
-        cond.notify_one();
-        return out;
+
+        return (front == -1 || front == rear);
+
     }
 
-    void enqueue(T elem){
-        lock_guard<mutex> lock(mut);
-        count++;
-        if(front==-1){
+    void ld(const Queue& other){
+
+        free(data);
+        data = other.data;
+        front = other.front;
+        rear = other.rear;
+        size = other.size;
+
+    }
+
+    void enqueue(T value){
+        std::lock_guard<mutex> lock(mut);
+        if(( front == 0 && rear == size-1 ) ||  (  rear==(front-1)%(size-1)  )){
+            //queue full
+            cout << "QUEUE FULL!!!!" << endl;
+            exit(1);
+        }
+        else if (front == -1){
+            front = rear = 0;
+            data[rear]=value;
+        }else if (rear == size-1 && front != 0){
+            rear = 0;
+            data[rear] = value;
+        }else{
+            rear++;
+            data[rear] = value;
+        }
+        
+        count ++;
+    }
+
+
+
+    bool dequeue(T* dest){
+
+
+
+        std::lock_guard<mutex> lock(mut);
+
+        if(front == -1){
+            cout << "QUEUE EMPTY!!!" << endl;
+            return false;
+        }
+
+        T out = data[front];
+        if(front == rear){
+            front = rear = -1;
+        }
+        else if (front == size-1){
+            front = 0;
+        }else{
             front++;
         }
-        rear++;
-        if(rear==size-1){
-            if(isfull()){
-                std::cout << "QueueOverflow error." << std::endl;
-                exit(1);
-            }
-            rear=0;
-        }
-        data[rear]=elem;
-        cond.notify_one();
+        count --;
+        *dest = out;
+        return true;
 
-    }
 
-    void dequeue(T* dest){
+
+
+
+
         
-        lock_guard<mutex> lock(mut);
-        count--;
-        if(front == -1){
-            std::cout << "QueueUnderflow error." << std::endl;
-            exit(1);
-        }
-        *dest = data[front];
-        front++;
-        if(front==size-1){
-            
-            front=0;
-        }
-        cond.notify_one();
-
-    }
-
-    T dequeue(){
-        lock_guard<mutex> lock(mut);
-        count--;
-
-        if(front == -1){
-            std::cout << "QueueUnderflow error." << std::endl;
-            exit(1);
-        }
-        T out = data[front];
-        front++;
-        if(front==size-1){
-            front=0;
-        }
-
-
-        cond.notify_one();
-
-        return out;
-
     }
 
 
+    void reset(){
+        free(data);
+        data = new T[size];
+        front = -1;
+        rear = -1;
+        count = 0;
+
+
+    }
 
 };

@@ -1,9 +1,21 @@
 #include "factorio.hpp"
 
+UXContext context2;
+UXContext context;
+Button b2(&context2, 500,500,200,200);
 
 
 void print_nonsense(UXElement* beans, void*n){
-    cout << "stuff"<<rand() << endl;
+    //something
+    context2.activate();
+
+}
+
+
+void switch_back(UXElement* a, void*n){
+
+    context.activate();
+
 }
 
 int main()
@@ -12,12 +24,21 @@ int main()
 
     sf::RenderWindow window(sf::VideoMode(1000,1000), "SFML");
 
-    UXContext context;
     Button b(&context,0,500,100,100);
     b.setColor(CI_FILL, Color(255,0,255));
     b.pre_render();
     b.setEvent(print_nonsense);
+
+
+    Button second(&context, 500,500,100,100);
+    second.pre_render();
+
+
     context.activate();
+
+    b2.pre_render();
+    b2.setEvent(switch_back);
+
 
 
     auto s = window.getSize();
@@ -43,7 +64,7 @@ int main()
         sf::Event event;
         while (window.pollEvent(event))
         {
-            context.feedEvent(event);
+            UX::feedUXEvent(event);
             if (event.type == sf::Event::Closed)
                 window.close();
 
@@ -76,8 +97,10 @@ int main()
         blank.draw(&window);
         Tiles::get(BLANK)->get()->setPosition(ASSET_DIM,0);
         Tiles::get(BLANK)->draw(&window);
-        context.draw(&window);
-
+        
+        
+        
+        UX::requestUXFrame(&window);
         window.display();
     }
 

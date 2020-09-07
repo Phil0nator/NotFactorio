@@ -6,9 +6,11 @@ void UXContext::pushnextelement(UXElement* n){
 
 void UXContext::texec(){
     while (events.empty()){} // wait for new stuff
-    UXEvent e = events.dequeue();
-    cout << events.count << endl;
-    e.go();
+    UXEvent e;
+    if(events.dequeue(&e)){
+        e.go();
+    }
+    
 }
 
 void UXContext_tickthreadmainlp(UXContext *context){
@@ -37,17 +39,27 @@ bool UXContext::isActive(){
     return active;
 
 }
+void UXContext::cleanup(){
 
+    t->terminate();
+    active=false;
+    events.reset();
+
+}
 
 void UXContext::activate(){
     if(activeContext == nullptr){
         activeContext = this;
-    }else{
-        activeContext->active = false;
-        activeContext = this;
+        active = true;
+        t->launch();
+        return;
     }
+
+    UXContext *old = activeContext;
+    activeContext = this;
     active = true;
     t->launch();
+    old->cleanup();
 }
 void UXContext::feedEvent(sf::Event e){
 
@@ -70,3 +82,51 @@ void UXContext::draw(RenderTarget* dest){
 
 
 }
+
+
+void UXContext::accessMouseCoords(int *x, int *y){
+
+    *x = mx;
+    *y = my;
+
+}
+
+
+void UXContext::fillInfo(){
+
+    mouseUps[0]=mouseUps[1]=mouseUps[2]=false;
+    for (int i = 0 ; i < sfeventstack.size();i++){
+        Event e = sfeventstack.at(i);
+        if (e.type == sf::Event::Closed){
+            t->terminate();
+        }
+        if(e.type == Event::MouseMoved){
+            mx = e.mouseMove.x;
+            my = e.mouseMove.y;
+            sfeventstack.erase(sfeventstack.begin()+i);
+        }else if (e.type == Event::MouseButtonPressed){
+            mouseDowns[e.mouseButton.button] = true;
+            sfeventstack.erase(sfeventstack.begin()+i);
+
+        }else if (e.type == Event::MouseButtonReleased){
+            mouseDowns[e.mouseButton.button]=false;
+            mouseUps[e.mouseButton.button]=true;
+            sfeventstack.erase(sfeventstack.begin()+i);
+
+        }
+    }
+
+}
+
+
+void requestUXFrame(RenderTarget *target){
+    if(activeContext == nullptr)return;
+    activeContext->draw(target);
+}
+
+void feedUXEvent(Event e){
+
+    if(activeContext == nullptr)return;
+    activeContext->feedEvent(e);
+}
+
