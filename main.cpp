@@ -4,12 +4,13 @@ UXContext context2;
 UXContext context;
 Button b2(&context2, 500,500,200,200);
 Button b;
+Button second;
 
 void print_nonsense(UXElement* beans, void*n){
     //something
 
     //cout << "RESPONSE: Button" << endl;
-    beans->show();
+    second.show();
 }
 
 
@@ -50,7 +51,7 @@ int main()
 
 
 
-    b.create(&context,0,500,100,100);
+    b.create(&context,20,500,100,100);
     b.setColor(CI_FILL, Color(255,0,255));
     b.setTextNode(TextNode(templte, "Button"));
     b.pre_render();
@@ -60,22 +61,24 @@ int main()
     b.ID = 0;
 
 
-    Button second(&context, 500,500,100,100);
+    second.create(&context, 500,500,100,100);
     second.setImage(Tiles::s_blank);
     second.setColor(CI_FILL, _UX_NOMASK);
+    second.setAnimation(A_SHOW, new UXAnimations::Swipe(100,UXAnimations::UP,500, animationFinished));
+
     second.pre_render();
     second.setEvent(dosomething);
 
 
 
-    Label l(&context,TextNode(default_label, "This is a label. "),100,700);
+    Label l(&context,TextNode(default_label, "This is a label. "),310,700);
     l.pre_render();
 
     context.activate();
 
     b2.pre_render();
     b2.setEvent(switch_back);
-
+    b2.setAnimation(A_SHOW, new UXAnimations::Swipe(1000,UXAnimations::UP,500, animationFinished));
 
 
 
@@ -84,7 +87,9 @@ int main()
     height = s.y;
 
 
-
+    Panel p(&context,10,490,610,700);
+    p.pre_render();
+    p.moveToBottom();
 
 
     Animation blank = Tiles::an_belt1;

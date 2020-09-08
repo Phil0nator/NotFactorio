@@ -29,6 +29,8 @@ void UXElement::show(){
     animating=true;
     for(int i = 0 ; i < 5;i++){
         if(anims[i] != nullptr){
+            anims[state]->ensureCompletion(this);
+
             anims[i]->progress=-1;
             anims[i]->feedInitial(this);
         }
@@ -53,6 +55,20 @@ void UXElement::handleOwnAnimation(){
         return;
     };
     anims[state]->apply(this,state);
-    if(!animating)context->events.enqueue(anims[state]->onfinish);
+    if(!animating){
+        context->events.enqueue(anims[state]->onfinish);
+        anims[state]->ensureCompletion(this);
+    }
+
+}
+
+void UXElement::moveToTop(){
+
+    context->moveElementToTop(this);
+
+}
+void UXElement::moveToBottom(){
+
+    context->moveElementToBottom(this);
 
 }

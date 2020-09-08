@@ -92,6 +92,7 @@ void Button::logic(){
 
 
     if(contains(mx,my)){
+        if(anims[state] != nullptr)anims[state]->ensureCompletion(this);
         state=UX_HOVER;
         md = context->mouseDowns[Mouse::Left];
         mu = context->mouseUps[Mouse::Left];
@@ -101,6 +102,7 @@ void Button::logic(){
         if (mu){
             state = UX_ACTIVE;
             context->events.enqueue(event);
+            
 
         }
     }else{

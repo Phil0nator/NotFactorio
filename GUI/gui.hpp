@@ -13,6 +13,7 @@
 #include "Queue.hpp"
 #include <string>
 #include <thread>
+#include <math.h>
 
 #ifndef __GUI__
 #define __GUI__
@@ -219,8 +220,13 @@ namespace UX{
 
             virtual void apply(UXElement* dest, int sprite) = 0;
             virtual void feedInitial(UXElement* og) = 0;
+            virtual void ensureCompletion(UXElement* og) = 0;
 
             };
+
+        class Fade;
+        class Swipe;
+        class Wiggle;
 
     }
 
@@ -389,6 +395,11 @@ namespace UX{
             vector<Event> accessSFEvents(){
                 return sfeventstack;
             }
+            
+
+            void moveElementToTop(UXElement* ptr);
+            void moveElementToBottom(UXElement* ptr);
+
             ///Get mouse coords for ui purposes
             void accessMouseCoords(int *x, int *y);
 
@@ -485,6 +496,11 @@ namespace UX{
                 if(context==nullptr)return;
                 context->pushnextelement(this);
             }
+            ~UXElement(){
+                for(int i =0;i<5;i++){
+                    delete anims[i];
+                }
+            }
             void handleOwnAnimation();
 
             void setColor(ColorIdentifier n, Color c);
@@ -492,6 +508,8 @@ namespace UX{
             void show();
             void hide();
             void toggle();
+            void moveToTop();
+            void moveToBottom();
             Color getColor(ColorIdentifier n);
 
             void setAnimation(AnimationIdentifier id, UXAnimations::Animation* anim);
@@ -616,11 +634,34 @@ namespace UX{
 
 
 
+    class Panel : public UXElement{
+        RectangleShape buff;
+        public:
+        RenderTexture rt;
+        Panel(UXContext *context, int _x, int _y, int _w, int _h) : UXElement(context, UX_PANEL){
+            x=_x;
+            y=_y;
+            w=_w;
+            h=_h;
+        }
+
+        Panel() : UXElement(nullptr, UX_PANEL){}
+
+        void pre_render();
+        void redraw(RenderTarget* dest);
+        void logic();
+
+    };
+
+
+
+
 
 
 
     #include "Button.cpp"
     #include "Label.cpp"
+    #include "Panel.cpp"
     #include "TextNode.cpp"
     #include "UXContext.cpp"
 

@@ -146,3 +146,23 @@ void feedUXEvent(Event e){
     activeContext->feedEvent(e);
 }
 
+void UXContext::moveElementToTop(UXElement*ptr){
+
+    for(int i = 0 ; i < elems.size();i++){
+        if(elems.at(i) == ptr){
+            elems.erase(elems.begin()+i);
+        }
+    }
+
+    elems.push_back(ptr);
+
+}
+
+void UXContext::moveElementToBottom(UXElement*ptr){
+    for(int i = 0 ; i < elems.size();i++){
+        if(elems.at(i) == ptr){
+            elems.erase(elems.begin()+i);
+        }
+    }
+    elems.insert(elems.begin(),ptr);
+}
